@@ -1,0 +1,299 @@
+/*
+ * Emotion picker and emotion chips.
+ *
+ * Each colored element sets `--emotion-color` inline to one of the six
+ * category colors. Everything below derives its tints from that variable
+ * with color-mix(), so there is one rule set for all six categories.
+ * Text always uses the normal text colors – the category color appears as a
+ * tint, border, dot or icon next to a written label, never as the only cue.
+ */
+
+.emotion-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.emotion-picker__selected { min-height: 36px; display: flex; align-items: center; }
+.emotion-picker__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* ---------- Chip ---------- */
+
+.emotion-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 3px 12px 3px 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--emotion-color) 14%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--emotion-color) 38%, var(--surface));
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.emotion-chip__dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--emotion-color);
+}
+.emotion-chip__category {
+  padding-left: 6px;
+  border-left: 1px solid color-mix(in oklab, var(--emotion-color) 45%, var(--surface));
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.emotion-chip__remove {
+  display: inline-grid;
+  place-items: center;
+  /* Visible size is small, but the negative margin + padding keep a 44px touch target. */
+  width: 44px;
+  height: 44px;
+  margin: -8px -14px -8px -8px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+/* ---------- Step 1: primary category cards ---------- */
+
+.emotion-primary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.emotion-primary-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 92px;
+  padding: var(--space-2);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--emotion-color) 16%, var(--surface));
+  color: var(--text);
+  font-weight: 650;
+  transition: min-height var(--transition), background var(--transition), border-color var(--transition);
+}
+.emotion-primary-card__icon { color: color-mix(in oklab, var(--emotion-color) 80%, var(--text)); }
+.emotion-primary-card[aria-expanded="true"] {
+  border-color: var(--emotion-color);
+  background: color-mix(in oklab, var(--emotion-color) 26%, var(--surface));
+}
+/* Once a category is open the cards shrink so the panel fits on screen. */
+.emotion-primary-grid--compact .emotion-primary-card { min-height: 68px; }
+.emotion-primary-card__count {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+@media (hover: hover) {
+  .emotion-primary-card:hover { background: color-mix(in oklab, var(--emotion-color) 24%, var(--surface)); }
+}
+
+/* ---------- Steps 2 and 3: the open category ---------- */
+
+.emotion-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--emotion-color) 8%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--emotion-color) 30%, var(--surface));
+  animation: fade-in 160ms ease;
+}
+@media (max-width: 420px) {
+  .emotion-panel { padding: var(--space-3); }
+}
+.emotion-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.emotion-quick {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1.5px dashed color-mix(in oklab, var(--emotion-color) 60%, var(--text-muted));
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+.emotion-quick[aria-pressed="true"] {
+  border-style: solid;
+  border-color: var(--emotion-color);
+  background: color-mix(in oklab, var(--emotion-color) 26%, var(--surface));
+}
+
+.emotion-secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  /* A card that opens grows downward without stretching its neighbour. */
+  align-items: start;
+}
+@media (min-width: 620px) {
+  .emotion-secondary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.emotion-card {
+  position: relative;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  transition: border-color var(--transition), background var(--transition);
+}
+.emotion-card[data-selected="true"] {
+  border-width: 2px;
+  border-color: var(--emotion-color);
+  background: color-mix(in oklab, var(--emotion-color) 16%, var(--surface));
+}
+.emotion-card__badge {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+.emotion-card__row { display: flex; align-items: stretch; }
+
+.emotion-card__select,
+.emotion-tertiary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  font-weight: 600;
+  /* Wrap between words; only split a word (with a hyphen) if it can't fit at all. */
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+.emotion-card__select {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 52px;
+  padding: var(--space-2) var(--space-1) var(--space-2) var(--space-3);
+  font-size: 0.9375rem;
+  line-height: 1.25;
+}
+.emotion-card__expand {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  min-height: 52px;
+  border: 0;
+  border-left: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+.emotion-card__expand svg { transition: transform var(--transition); }
+.emotion-card__expand[aria-expanded="true"] svg { transform: rotate(180deg); }
+.emotion-card__child-count {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+/* The round tick box inside selectable cards. */
+.emotion-check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--accent-contrast);
+}
+[aria-pressed="true"] > .emotion-check {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.emotion-card__tertiary {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 0 0 calc(var(--radius-md) - 2px) calc(var(--radius-md) - 2px);
+  border-top: 1px solid var(--border);
+  background: color-mix(in oklab, var(--surface) 70%, transparent);
+}
+.emotion-card__tertiary li + li { border-top: 1px solid var(--border); }
+.emotion-tertiary {
+  min-height: 46px;
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.9375rem;
+  font-weight: 550;
+}
+.emotion-tertiary[aria-pressed="true"] {
+  background: color-mix(in oklab, var(--emotion-color) 22%, var(--surface));
+}
+
+/* ---------- Emotions grouped by category (history cards) ---------- */
+
+.emotion-groups { display: flex; flex-direction: column; gap: var(--space-2); }
+.emotion-group {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: var(--space-2);
+  align-items: start;
+}
+.emotion-group__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  color: var(--text-secondary);
+}
+.emotion-group__label svg { flex: none; color: color-mix(in oklab, var(--emotion-color) 80%, var(--text)); }
+.emotion-group__chips { display: flex; flex-wrap: wrap; gap: 6px; }

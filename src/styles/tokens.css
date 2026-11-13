@@ -1,0 +1,163 @@
+/*
+ * Design tokens
+ * -------------
+ * Every color, radius, shadow and spacing value used by the app is defined
+ * here ONCE as a CSS custom property ("variable"). Components refer to the
+ * variable (e.g. `var(--surface)`), never to a raw color, so switching to dark
+ * mode only means swapping the values in this file.
+ *
+ * Theme selection:
+ *   - No data-theme attribute  → follow the phone/computer setting.
+ *   - <html data-theme="light"> or "dark" → the choice made in Settings wins.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces and text */
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --surface-2: #f0eee9;
+  --surface-3: #e7e4dd;
+  --text: #1d1c22;
+  --text-secondary: #55535e;
+  --text-muted: #6e6b76;
+  --border: rgba(29, 28, 34, 0.1);
+  --border-strong: rgba(29, 28, 34, 0.22);
+
+  /* The app's own accent is a neutral "ink" so it never competes with the
+     six emotion colors, which carry meaning. */
+  --accent: #26242e;
+  --accent-contrast: #ffffff;
+  --focus-ring: #2a78d6;
+
+  /* Status colors (always paired with an icon or text, never color alone). */
+  --danger: #c2333a;
+  --danger-soft: #fbe9ea;
+  --success: #1c7c45;
+  --success-soft: #e4f4ea;
+  --warning-soft: #fdf3d7;
+
+  /*
+   * Emotion-wheel colors. Same hues as the wheel (red, purple, blue, yellow,
+   * cyan, green); the exact steps were checked for color-blind separation and
+   * contrast in both themes. Keep in sync with src/data/emotionTaxonomy.js –
+   * a unit test fails if they drift apart.
+   */
+  --emotion-anger: #e34948;
+  --emotion-disgust: #8b6fd9;
+  --emotion-sad: #2a78d6;
+  --emotion-happy: #eda100;
+  --emotion-surprise: #12a8c8;
+  --emotion-fear: #008300;
+  --emotion-unknown: #8a8791;
+
+  /* Chart furniture */
+  --chart-grid: #e6e3dc;
+  --chart-axis: #c5c2ba;
+  /* Neutral color for single-series charts (counts over time, time of day),
+     so the emotion colors only ever mean "emotion category". */
+  --chart-series: #5f5d6b;
+
+  /* Shape */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(24, 22, 34, 0.05), 0 1px 3px rgba(24, 22, 34, 0.04);
+  --shadow-md: 0 8px 24px rgba(24, 22, 34, 0.1);
+  --shadow-lg: 0 16px 48px rgba(24, 22, 34, 0.18);
+
+  /* Spacing scale (multiples of 4px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Layout */
+  --nav-height: 64px;
+  --content-max-width: 760px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --transition: 160ms ease;
+}
+
+/* Dark values, used when the device is in dark mode and no manual choice was made… */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121214;
+    --surface: #1c1c1f;
+    --surface-2: #27272b;
+    --surface-3: #323237;
+    --text: #f1efea;
+    --text-secondary: #c5c3bc;
+    --text-muted: #9d9ba3;
+    --border: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.24);
+    --accent: #f1efea;
+    --accent-contrast: #1a1a1d;
+    --focus-ring: #6da7ec;
+    --danger: #f0787d;
+    --danger-soft: #3a1f22;
+    --success: #5cc98a;
+    --success-soft: #1b3326;
+    --warning-soft: #3a3118;
+    --emotion-anger: #e5595c;
+    --emotion-disgust: #9085e9;
+    --emotion-sad: #3987e5;
+    --emotion-happy: #c98500;
+    --emotion-surprise: #18a4be;
+    --emotion-fear: #008300;
+    --emotion-unknown: #8a8791;
+    --chart-grid: #2e2e32;
+    --chart-axis: #45454a;
+    --chart-series: #b4b2bf;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* …and the same values again for when dark mode is chosen in Settings. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121214;
+  --surface: #1c1c1f;
+  --surface-2: #27272b;
+  --surface-3: #323237;
+  --text: #f1efea;
+  --text-secondary: #c5c3bc;
+  --text-muted: #9d9ba3;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.24);
+  --accent: #f1efea;
+  --accent-contrast: #1a1a1d;
+  --focus-ring: #6da7ec;
+  --danger: #f0787d;
+  --danger-soft: #3a1f22;
+  --success: #5cc98a;
+  --success-soft: #1b3326;
+  --warning-soft: #3a3118;
+  --emotion-anger: #e5595c;
+  --emotion-disgust: #9085e9;
+  --emotion-sad: #3987e5;
+  --emotion-happy: #c98500;
+  --emotion-surprise: #18a4be;
+  --emotion-fear: #008300;
+  --emotion-unknown: #8a8791;
+  --chart-grid: #2e2e32;
+  --chart-axis: #45454a;
+    --chart-series: #b4b2bf;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
